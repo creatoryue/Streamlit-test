@@ -22,8 +22,7 @@ black==19.10b0
 bleach==3.3.0
 blinker==1.4
 brotlipy==0.7.0
-cachetools==4.2.2
-certifi==2021.5.30
+cachcfi==2021.5.30
 cffi==1.14.5
 chardet==4.0.0
 click==8.0.1
@@ -157,7 +156,6 @@ Rtree==0.9.7
 scikit-learn==0.24.2
 scipy==1.6.2
 Send2Trash==1.7.1
-setuptools==52.0.0.post20210125
 sip==4.19.13
 six==1.16.0
 smmap==4.0.0
