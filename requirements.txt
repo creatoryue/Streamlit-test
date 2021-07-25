@@ -119,7 +119,6 @@ PyAudio==0.2.11
 pycparser==2.20
 pydeck==0.6.2
 pydocstyle==6.1.1
-pyflakes==2.2.0
 Pygments==2.9.0
 PyJWT==1.7.1
 pylint==2.9.1
