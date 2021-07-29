@@ -18,7 +18,7 @@ class Sound():
         print("hello")
         
     def recording(self,fn):
-        self.myrecording = sd.rec(int(duration * fs), dtype='float32')
+        self.myrecording = sd.rec(int(duration * fs), dtype='float64')
         sd.wait(duration)
         
         # Save as WAV file # **fs needs int dtype
