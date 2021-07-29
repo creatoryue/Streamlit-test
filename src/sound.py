@@ -35,8 +35,7 @@ class Sound():
         sd.wait()
 
     def read(self, fn):
-        filename = saveWavFile(fn)
-        ssdata, fs = librosa.load(filename)
+        ssdata, fs = librosa.load(fn)
         # ssdata, fs = librosa.load(DATA_DIR+'\\{}'.format(fn))
 
         # ssdata, fs = sf.read('data\\{}'.format(fn), dtype='float32')
