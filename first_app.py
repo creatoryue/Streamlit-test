@@ -2,6 +2,7 @@ import streamlit as st
 from src import loadModel, sound
 import numpy as np
 import os
+from settings import DATA_DIR
 
 classes = ['COPD-Mild', 'COPD-Severe', 'Interstitial Lung Disease', 'Normal']
 
@@ -37,7 +38,7 @@ if state_recordButton:
 
 '''## 3.Show and Play your own voice.'''
 
-folder_path='.\data'
+folder_path = DATA_DIR
 filenames = os.listdir(folder_path)
 selected_filename = st.selectbox('Select a file', filenames)
 
