@@ -4,7 +4,7 @@ import numpy as np
 import soundfile as sf
 from scipy.io.wavfile import write
 import librosa
-from settings import DATA_DIR, saveWavFile, readWavFile
+# from settings import DATA_DIR, saveWavFile, readWavFile
 
 duration = 32  # seconds
 fs = 44100 #int for write
@@ -22,8 +22,8 @@ class Sound():
         sd.wait(duration)
         
         # Save as WAV file # **fs needs int dtype
-        filename = saveWavFile(fn)
-        write(filename, fs, self.myrecording)  
+        # filename = saveWavFile(fn)
+        write(fn, fs, self.myrecording)  
         
         return self.myrecording
     
@@ -35,8 +35,8 @@ class Sound():
         sd.wait()
 
     def read(self, fn):
-        filename = readWavFile(fn)
-        ssdata, fs = librosa.load(filename)
+        # filename = readWavFile(fn)
+        ssdata, fs = librosa.load(fn)
         # ssdata, fs = librosa.load(DATA_DIR+'\\{}'.format(fn))
 
         # ssdata, fs = sf.read('data\\{}'.format(fn), dtype='float32')
