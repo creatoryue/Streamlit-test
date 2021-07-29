@@ -28,7 +28,7 @@ filename_user = st.text_input('Enter a filename: ')
 
 state_recordButton = st.button("Click to Record")
 if state_recordButton:
-    if filename == "":
+    if filename_user == "":
         st.warning("Choose a filename.")
     else:
         #record the sound data and create WAV file
