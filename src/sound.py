@@ -37,6 +37,13 @@ class Sound():
                         frames_per_buffer=self.chunk,
                         input_device_index=self.device)
         self.frames = []
+        for i in range(0, int(self.sample_rate / self.chunk * self.duration)):
+            data = stream.read(self.chunk)
+            self.frames.append(data)
+            
+        stream.stop_stream()
+        stream.close()
+        self.audio.terminate()
         
         
         #Recording using sounddevice
@@ -45,7 +52,8 @@ class Sound():
         
         # Save as WAV file # **fs needs int dtype
         # filename = saveWavFile(fn)
-        write(fn, fs, self.myrecording)  
+        
+        # write(fn, fs, self.myrecording)  
         
         return self.myrecording
     
