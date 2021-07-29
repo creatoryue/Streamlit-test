@@ -8,9 +8,11 @@ DATA_DIR = os.path.join(ROOT_DIR, 'data')
 
 
 MODEL_DIR = os.path.join(ROOT_DIR, 'models')
-MODEL_H5 = os.path.join(MODEL_DIR, 'CNN_for4lungcondition_20210717.h5')
+MODEL_H5 = os.path.join(MODEL_DIR, 'model.h5')
 
-WAVE_OUTPUT_FILE = os.path.join(DATA_DIR, "recorded.wav")
+def saveWavFile(fn):    
+    WAVE_OUTPUT_FILE = os.path.join(DATA_DIR, "{}.wav".format(fn))
+    return WAVE_OUTPUT_FILE
 
 
 
