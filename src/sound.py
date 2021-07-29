@@ -4,7 +4,7 @@ import numpy as np
 import soundfile as sf
 from scipy.io.wavfile import write
 import librosa
-from settings import DATA_DIR, WAVE_OUTPUT_FILE
+from settings import DATA_DIR, saveWavFile
 
 duration = 32  # seconds
 fs = 44100 #int for write
