@@ -14,7 +14,9 @@ def saveWavFile(fn):
     WAVE_OUTPUT_FILE = os.path.join(DATA_DIR, "{}.wav".format(fn))
     return WAVE_OUTPUT_FILE
 
-
+def readWavFile(fn): #fn has Filename Extension(.wav)
+    WAVE_OUTPUT_FILE = os.path.join(DATA_DIR, "{}".format(fn))
+    return WAVE_OUTPUT_FILE
 
 
 # Audio configurations
