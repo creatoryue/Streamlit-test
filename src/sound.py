@@ -28,32 +28,32 @@ class Sound():
         
     def recording(self,fn):
         #Recording using pyaudio
-        self.audio = pyaudio.PyAudio()
-        stream = self.audio.open(
-                        format=self.format,
-                        channels=self.channels,
-                        rate=self.sample_rate,
-                        input=True,
-                        frames_per_buffer=self.chunk,
-                        input_device_index=self.device)
-        self.frames = []
-        for i in range(0, int(self.sample_rate / self.chunk * self.duration)):
-            data = stream.read(self.chunk)
-            self.frames.append(data)
+        #self.audio = pyaudio.PyAudio()
+        #stream = self.audio.open(
+        #                format=self.format,
+        #                channels=self.channels,
+        #                rate=self.sample_rate,
+        #                input=True,
+        #                frames_per_buffer=self.chunk,
+        #                input_device_index=self.device)
+        #self.frames = []
+        #for i in range(0, int(self.sample_rate / self.chunk * self.duration)):
+        #    data = stream.read(self.chunk)
+        #    self.frames.append(data)
             
-        stream.stop_stream()
-        stream.close()
-        self.audio.terminate()
+        #stream.stop_stream()
+        #stream.close()
+        #self.audio.terminate()
         
         
         #Recording using sounddevice
-        # self.myrecording = sd.rec(int(duration * fs), dtype='int')
-        # sd.wait(duration)
+        self.myrecording = sd.rec(int(duration * fs), dtype='int')
+        sd.wait(duration)
         
         # Save as WAV file # **fs needs int dtype
         # filename = saveWavFile(fn)
         
-        # write(fn, fs, self.myrecording)  
+        write(fn, fs, self.myrecording)  
         
         return self.myrecording
     
