@@ -52,7 +52,7 @@ class Sound():
         
         # Save as WAV file # **fs needs int dtype        
         #write(fn, fs, self.myrecording)  
-        st.text(self.audio.get_device_count())
+        st.text(self.audio.get_default_input_device_info())
         
         return self.myrecording
     
