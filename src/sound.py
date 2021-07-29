@@ -47,7 +47,9 @@ class Sound():
         
         
         #Recording using sounddevice
-        self.myrecording = sd.rec(int(DURATION * DEFAULT_SAMPLE_RATE), dtype='int')
+        # self.myrecording = sd.rec(int(DURATION * DEFAULT_SAMPLE_RATE), dtype='int', channels=2)
+        self.myrecording = sd.rec(int(DURATION * DEFAULT_SAMPLE_RATE))
+
         sd.wait(DURATION)
         
         # Save as WAV file # **fs needs int dtype
