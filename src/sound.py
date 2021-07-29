@@ -47,7 +47,7 @@ class Sound():
         
         
         #Recording using sounddevice
-        self.myrecording = sd.rec(int(DURATION * DEFAULT_SAMPLE_RATE), dtype='uint8', channels=2)
+        self.myrecording = sd.rec(int(DURATION * DEFAULT_SAMPLE_RATE), dtype='float32', channels=2)
         
 
         sd.wait(DURATION)
