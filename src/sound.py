@@ -7,7 +7,7 @@ import librosa
 # from settings import DATA_DIR, saveWavFile, readWavFile
 from settings import MAX_INPUT_CHANNELS, DEFAULT_SAMPLE_RATE, CHUNK_SIZE, INPUT_DEVICE, DURATION
 
-duration = DURATION  # seconds
+
 sd.default.samplerate = DEFAULT_SAMPLE_RATE
 sd.default.channels = MAX_INPUT_CHANNELS
 
@@ -47,8 +47,8 @@ class Sound():
         
         
         #Recording using sounddevice
-        self.myrecording = sd.rec(int(duration * fs), dtype='int')
-        sd.wait(duration)
+        self.myrecording = sd.rec(int(DURATION * DEFAULT_SAMPLE_RATE), dtype='int')
+        sd.wait(DURATION)
         
         # Save as WAV file # **fs needs int dtype
         # filename = saveWavFile(fn)
