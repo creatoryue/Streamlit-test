@@ -7,10 +7,9 @@ import librosa
 # from settings import DATA_DIR, saveWavFile, readWavFile
 from settings import MAX_INPUT_CHANNELS, DEFAULT_SAMPLE_RATE, CHUNK_SIZE, INPUT_DEVICE
 
-duration = 32  # seconds
-fs = 44100 #int for write
-sd.default.samplerate = fs
-sd.default.channels = 1
+duration = DURATION  # seconds
+sd.default.samplerate = DEFAULT_SAMPLE_RATE
+sd.default.channels = MAX_INPUT_CHANNELS
 
 class Sound():
     def __init__(self):
@@ -20,6 +19,8 @@ class Sound():
         self.sample_rate = DEFAULT_SAMPLE_RATE
         self.chunk = CHUNK_SIZE
         self.device = INPUT_DEVICE
+        self.frames = []
+        self.duration = DURATION
         
         self.myrecording = np.array([])
         self.fs = 44100
@@ -35,6 +36,8 @@ class Sound():
                         input=True,
                         frames_per_buffer=self.chunk,
                         input_device_index=self.device)
+        self.frames = []
+        
         
         #Recording using sounddevice
         # self.myrecording = sd.rec(int(duration * fs), dtype='int')
