@@ -37,8 +37,8 @@ class CNN(object):
     def loadTrainingModel(self):
         '''load the CNN model'''
         # self.model = models.load_model('.\\models\\model.h5')
-        self.model = models.load_model('models\\CNN_for4lungcondition_20210717.h5')
-        
+        self.model = models.load_model('models\CNN_for4lungcondition_20210717.h5')
+                                              
         return self.model
     
     def Hello(self):
