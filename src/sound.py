@@ -22,7 +22,8 @@ class Sound():
         sd.wait(duration)
         
         # Save as WAV file # **fs needs int dtype
-        write(DATA_DIR+'\\{}.wav'.format(fn), fs, self.myrecording)  
+        filename = saveWavFile(fn)
+        write(filename, fs, self.myrecording)  
         
         return self.myrecording
     
@@ -34,7 +35,9 @@ class Sound():
         sd.wait()
 
     def read(self, fn):
-        ssdata, fs = librosa.load(DATA_DIR+'\\{}'.format(fn))
+        filename = saveWavFile(fn)
+        ssdata, fs = librosa.load(filename)
+        # ssdata, fs = librosa.load(DATA_DIR+'\\{}'.format(fn))
 
         # ssdata, fs = sf.read('data\\{}'.format(fn), dtype='float32')
         self.myrecording = ssdata
