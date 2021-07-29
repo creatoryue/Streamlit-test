@@ -6,7 +6,7 @@ from scipy.io.wavfile import write
 import librosa
 # from settings import DATA_DIR, saveWavFile, readWavFile
 from settings import MAX_INPUT_CHANNELS, DEFAULT_SAMPLE_RATE, CHUNK_SIZE, INPUT_DEVICE, DURATION
-
+import streamlit as st
 
 sd.default.samplerate = DEFAULT_SAMPLE_RATE
 sd.default.channels = MAX_INPUT_CHANNELS
