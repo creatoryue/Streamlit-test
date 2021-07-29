@@ -2,7 +2,7 @@ import streamlit as st
 from src import loadModel, sound
 import numpy as np
 import os
-from settings import DATA_DIR
+from settings import DATA_DIR, saveWavFile, readWavFile
 
 classes = ['COPD-Mild', 'COPD-Severe', 'Interstitial Lung Disease', 'Normal']
 
@@ -31,17 +31,15 @@ if state_recordButton:
     if filename == "":
         st.warning("Choose a filename.")
     else:
-        #record the sound data and save as WAV file
-        
-        recorddata = s.recording(filename_user)
+        #record the sound data and create WAV file
+        fn = saveWavFile(filename_user)
+        recorddata = s.recording(fn)
         st.text('Record completed!')
 
 
 '''## 3.Show and Play your own voice.'''
-
-folder_path = DATA_DIR
-filenames = os.listdir(folder_path)
-selected_filename = st.selectbox('Select a file', filenames)
+filenames = os.listdir(DATA_DIR)
+selected_filename = st.selectbox('Select a file', filenames) # selected_filename contains "XXX.wav" but not whole, correct filepath
 
 
 # state_checkbox = st.checkbox('Show dataframe')
@@ -53,7 +51,8 @@ state_playButton = st.button("Click to Play")
 if state_playButton:
     # st.text(selected_filename)
     # s.read(selected_filename)
-    s.play(selected_filename)
+    fn = readWavFile(selected_filename)
+    s.play(fn)
         
 # '''## 5.Show the recording data'''
 
@@ -64,8 +63,9 @@ state_predictButton = st.button("Predition")
 if state_predictButton:
     
     # Read the sound file 
+    fn = readWavFile(selected_filename)
     s_pred = sound.Sound()
-    s_pred.read(selected_filename)
+    s_pred.read(fn)
     sample_data = s_pred.myrecording
     
     st.text('Read the sound file {} completed'.format(selected_filename))
