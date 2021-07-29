@@ -52,6 +52,7 @@ class Sound():
         
         # Save as WAV file # **fs needs int dtype        
         #write(fn, fs, self.myrecording)  
+        sd.query_devices()
         
         return self.myrecording
     
