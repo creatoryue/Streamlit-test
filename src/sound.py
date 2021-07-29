@@ -5,7 +5,7 @@ import soundfile as sf
 from scipy.io.wavfile import write
 import librosa
 # from settings import DATA_DIR, saveWavFile, readWavFile
-from settings import MAX_INPUT_CHANNELS, DEFAULT_SAMPLE_RATE, CHUNK_SIZE, INPUT_DEVICE
+from settings import MAX_INPUT_CHANNELS, DEFAULT_SAMPLE_RATE, CHUNK_SIZE, INPUT_DEVICE, DURATION
 
 duration = DURATION  # seconds
 sd.default.samplerate = DEFAULT_SAMPLE_RATE
