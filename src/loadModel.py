@@ -3,6 +3,7 @@ from keras.layers import Dense, Dropout, Flatten, Conv1D, MaxPooling1D, BatchNor
 from keras import models
 import librosa
 import numpy as np
+from settings import MODEL_H5
 
 n_timesteps = 1290
 input_shape = (1290, 20)
