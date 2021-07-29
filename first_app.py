@@ -24,7 +24,7 @@ load_state = st.text("Successful...")
 
 '''## 2.Record your own voice for 32 sec.'''
 # st.header('Record your own voice.')
-filename = st.text_input('Enter a filename: ')
+filename_user = st.text_input('Enter a filename: ')
 
 state_recordButton = st.button("Click to Record")
 if state_recordButton:
@@ -32,7 +32,8 @@ if state_recordButton:
         st.warning("Choose a filename.")
     else:
         #record the sound data and save as WAV file
-        recorddata = s.recording(filename)
+        
+        recorddata = s.recording(filename_user)
         st.text('Record completed!')
 
 
