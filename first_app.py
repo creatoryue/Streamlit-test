@@ -69,9 +69,9 @@ state_predictButton = st.button("Predition")
 if state_predictButton:
     
     # Read the sound file 
-    st.text('Selected filename:', selected_filename)
+    st.text('Selected filename:'+ selected_filename)
     fn = readWavFile(selected_filename)
-    st.text('fn:', fn)
+    st.text('fn:'+ fn)
     
     y, sr = librosa.load(fn, sr=44100)
     
