@@ -32,6 +32,25 @@ load_state = st.text("Successful...")
 filename_user = st.text_input('Enter a filename: ')
 
 stt_button = Button(label="Speak", width=100)
+stt_button.js_on_event("button_click", CustomJS(code="""
+    var recognition = new webkitSpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+ 
+    recognition.onresult = function (e) {
+        var value = "";
+        for (var i = e.resultIndex; i < e.results.length; ++i) {
+            if (e.results[i].isFinal) {
+                value += e.results[i][0].transcript;
+            }
+        }
+        if ( value != "") {
+            document.dispatchEvent(new CustomEvent("GET_TEXT", {detail: value}));
+        }
+    }
+    recognition.start();
+    """))
+
 
 #state_recordButton = st.button("Click to Record")
 #if state_recordButton:
