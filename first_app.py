@@ -37,15 +37,15 @@ filename_user = st.text_input('Enter a filename: ')
 
 
 stt_button = Button(label="Speak", button_type='primary')
-javacode = ''' 
 
-'''
-stt_button.js_on_event("button_click", CustomJS(code= javacode))
+callback = CustomJS(code= '''
+    console.log('tap event occurred')      
+                   
+                   ''')
 
-result = streamlit_bokeh_events(
-    stt_button,
-    events="GET_TEXT",
-    key="listen")
+stt_button.js_on_event("button_click", callback)
+
+
 
 #state_recordButton = st.button("Click to Record")
 #if state_recordButton:
