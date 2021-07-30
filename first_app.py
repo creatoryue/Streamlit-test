@@ -59,7 +59,9 @@ result = streamlit_bokeh_events(
     override_height=75,
     debounce_time=0)
 
-
+if result:
+    if "GET_TEXT" in result:
+        st.write(result.get("GET_TEXT"))
 #state_recordButton = st.button("Click to Record")
 #if state_recordButton:
 #    if filename_user == "":
