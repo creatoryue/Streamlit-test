@@ -2,8 +2,8 @@ import streamlit as st
 import numpy as np
 import os
 import librosa
-from bokeh.models.widgets import Button
-from bokeh.models import CustomJS
+#from bokeh.models.widgets import Button
+from bokeh.models import CustomJS, Button
 from streamlit_bokeh_events import streamlit_bokeh_events
 
 from settings import DATA_DIR, saveWavFile, readWavFile
