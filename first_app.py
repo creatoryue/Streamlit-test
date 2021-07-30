@@ -69,14 +69,9 @@ state_predictButton = st.button("Predition")
 if state_predictButton:
     
     # Read the sound file 
-    st.text('Selected filename:'+ selected_filename)
+
     fn = readWavFile(selected_filename)
-    st.text('fn:'+ fn)
-    
-    y, sr = librosa.load(fn, sr=44100)
-    
-    
-    '''
+
     s_pred = sound.Sound()
     s_pred.read(fn)
     
@@ -92,8 +87,7 @@ if state_predictButton:
     # s1 is the percentage of the predicted class
     s2 = np.round(float(data_pred[0,data_pred_class])*100, 4)
     st.text("Predict class: {} for {}%".format(s1, s2))
-    '''
-    
+
     
     
      
