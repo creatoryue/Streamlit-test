@@ -24,7 +24,7 @@ class Sound():
         
         self.myrecording = np.array([])
         self.fs = 44100
-        print("hello")
+        print("Class sound.Sound run")
         
     def recording(self,fn):
         #Recording using pyaudio
