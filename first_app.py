@@ -36,7 +36,7 @@ filename_user = st.text_input('Enter a filename: ')
 
 
 
-stt_button = Button(label="Speak", button_type=primary)
+stt_button = Button(label="Speak", button_type='primary')
 javacode = ''' 
 
 '''
