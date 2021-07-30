@@ -28,17 +28,18 @@ load_state = st.text("Successful...")
 
 '''## 2.Record your own voice for 32 sec.'''
 # st.header('Record your own voice.')
-filename_user = st.text_input('Enter a filename: ')
+#filename_user = st.text_input('Enter a filename: ')
 
-state_recordButton = st.button("Click to Record")
-if state_recordButton:
-    if filename_user == "":
-        st.warning("Choose a filename.")
-    else:
-        #record the sound data and create WAV file
-        fn = saveWavFile(filename_user)
-        recorddata = s.recording(fn)
-        st.text('Record completed!')
+#state_recordButton = st.button("Click to Record")
+#if state_recordButton:
+#    if filename_user == "":
+#        st.warning("Choose a filename.")
+#    else:
+#        #record the sound data and create WAV file
+#        fn = saveWavFile(filename_user)
+#        recorddata = s.recording(fn)
+#        st.text('Record completed!')
+
 
 
 '''## 3.Show and Play your own voice.'''
