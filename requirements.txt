@@ -12,3 +12,6 @@ pyaudio
 
 bokeh
 streamlit_bokeh_events
+
+IPython
+ipywebrtc
