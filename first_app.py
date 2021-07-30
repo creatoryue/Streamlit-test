@@ -38,9 +38,9 @@ filename_user = st.text_input('Enter a filename: ')
 
 stt_button = Button(label="Speak", button_type='primary')
 javacode = ''' 
-
+st.text('III')
 '''
-stt_button.js_on_event("button_click", CustomJS(code= javacode))
+stt_button.js_on_event("button_click", code= javacode)
 
 result = streamlit_bokeh_events(
     stt_button,
