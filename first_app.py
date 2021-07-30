@@ -1,8 +1,12 @@
 import streamlit as st
-from src import loadModel, sound
 import numpy as np
 import os
+from bokeh.models.widgets import Button
+from bokeh.models import CustomJS
+from streamlit_bokeh_events import streamlit_bokeh_events
+
 from settings import DATA_DIR, saveWavFile, readWavFile
+from src import loadModel, sound
 
 classes = ['COPD-Mild', 'COPD-Severe', 'Interstitial Lung Disease', 'Normal']
 
