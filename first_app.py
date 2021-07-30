@@ -38,12 +38,21 @@ filename_user = st.text_input('Enter a filename: ')
 
 stt_button = Button(label="Speak", button_type='primary')
 callback = CustomJS(code= '''
-    console.log('tap event occurred')      
+    var audioContext = new AudioContext();
+    var microphone = audioContext.createMediaStreamSource(stream);
+    recorder = new Recorder(microphone, { numChannels: 1, sampleRate: 8000 });   
                    
                    ''')
 stt_button.js_on_event("button_click", callback)
 
-# streamlit_bokeh_events(stt_button, callback)
+
+result = streamlit_bokeh_events(
+        stt_button,
+        events="microphone",
+        key="foo",
+        refresh_on_update=False,
+        override_height=600,
+        debounce_time=500)
 
 #state_recordButton = st.button("Click to Record")
 #if state_recordButton:
