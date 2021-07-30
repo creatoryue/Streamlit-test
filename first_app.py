@@ -1,6 +1,7 @@
 import streamlit as st
 import numpy as np
 import os
+import librosa
 from bokeh.models.widgets import Button
 from bokeh.models import CustomJS
 from streamlit_bokeh_events import streamlit_bokeh_events
@@ -71,11 +72,11 @@ if state_predictButton:
     fn = readWavFile(selected_filename)
     
     
-    
-    
+    y, sr = librosa.load(fn, sr=44100)
+    '''
     s_pred = sound.Sound()
     s_pred.read(fn)
-    '''
+    
     sample_data = s_pred.myrecording
     
     st.text('Read the sound file {} completed'.format(selected_filename))
