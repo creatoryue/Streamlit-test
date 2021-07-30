@@ -37,6 +37,13 @@ stt_button.js_on_event("button_click", CustomJS(code="""
     
     """))
 
+result = streamlit_bokeh_events(
+    stt_button,
+    events="GET_TEXT",
+    key="listen",
+    refresh_on_update=False,
+    override_height=75,
+    debounce_time=0)
 
 #state_recordButton = st.button("Click to Record")
 #if state_recordButton:
