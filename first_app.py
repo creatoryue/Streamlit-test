@@ -43,7 +43,7 @@ callback = CustomJS(code= '''
                    ''')
 stt_button.js_on_event("button_click", callback)
 
-streamlit_bokeh_events(stt_button, callback)
+# streamlit_bokeh_events(stt_button, callback)
 
 #state_recordButton = st.button("Click to Record")
 #if state_recordButton:
