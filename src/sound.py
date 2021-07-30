@@ -51,8 +51,8 @@ class Sound():
         # sd.wait(DURATION)
         
         # Save as WAV file # **fs needs int dtype        
-        #write(fn, fs, self.myrecording)  
-        st.text(self.audio.get_default_input_device_info())
+        # write(fn, fs, self.myrecording)  
+        # st.text(self.audio.get_default_input_device_info())
         
         return self.myrecording
     
