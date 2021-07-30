@@ -75,8 +75,9 @@ if state_predictButton:
     
     s_pred = sound.Sound()
     s_pred.read(fn)
-    sample_data = s_pred.myrecording
     '''
+    sample_data = s_pred.myrecording
+    
     st.text('Read the sound file {} completed'.format(selected_filename))
     
     data_pred = cnn.samplePred(cnn, sample_data)
