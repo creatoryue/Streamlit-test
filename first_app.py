@@ -37,15 +37,10 @@ filename_user = st.text_input('Enter a filename: ')
 
 
 stt_button = Button(label="Speak", width=100)
-stt_button.js_on_event("button_click", CustomJS(code="""
-    camera = CameraStream(constraints={'audio': True,
-                                   'video': False},
-                      mimeType='audio/wav')
-    recorder = AudioRecorder(stream=camera)
-    recorder.recording = True
-    document.dispatchEvent(new CustomEvent("GET_TEXT", {detail: value}));
+javacode = ''' 
 
-    """))
+'''
+stt_button.js_on_event("button_click", CustomJS(code= javacode))
 
 result = streamlit_bokeh_events(
     stt_button,
