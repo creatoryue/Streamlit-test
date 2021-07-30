@@ -69,6 +69,10 @@ if state_predictButton:
     
     # Read the sound file 
     fn = readWavFile(selected_filename)
+    
+    st.text(fn)
+    
+    '''
     s_pred = sound.Sound()
     s_pred.read(fn)
     sample_data = s_pred.myrecording
@@ -84,7 +88,7 @@ if state_predictButton:
     s2 = np.round(float(data_pred[0,data_pred_class])*100, 4)
     st.text("Predict class: {} for {}%".format(s1, s2))
     
-    
+    '''
     
     
      
