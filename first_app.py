@@ -6,6 +6,9 @@ import librosa
 from bokeh.models import CustomJS, Button
 from streamlit_bokeh_events import streamlit_bokeh_events
 
+from IPython.display import Audio
+from ipywebrtc import CameraStream, AudioRecorder
+
 from settings import DATA_DIR, saveWavFile, readWavFile
 from src import loadModel, sound
 
@@ -31,16 +34,18 @@ load_state = st.text("Successful...")
 # st.header('Record your own voice.')
 filename_user = st.text_input('Enter a filename: ')
 
-stt_button = Button(label="Speak", width=100)
-stt_button.js_on_event("button_click", CustomJS(code="""
-    <input type="file" accept="audio/*" capture>
-    
-    """))
 
-result = streamlit_bokeh_events(
-    stt_button,
-    events="GET_TEXT",
-    key="listen")
+
+#stt_button = Button(label="Speak", width=100)
+#stt_button.js_on_event("button_click", CustomJS(code="""
+#    <input type="file" accept="audio/*" capture>
+#    
+#    """))
+
+#result = streamlit_bokeh_events(
+#    stt_button,
+#    events="GET_TEXT",
+#    key="listen")
 
 #state_recordButton = st.button("Click to Record")
 #if state_recordButton:
