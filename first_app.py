@@ -1,279 +1,331 @@
-import logging
-from pathlib import Path
 import streamlit as st
-import pydub
 import numpy as np
-# import queue
-import matplotlib.pyplot as plt
-import librosa
-import librosa.display
-
-from src import loadModel
-import time
-
-# from aiortc.contrib.media import MediaRecorder
-
-from streamlit_webrtc import (
-    # AudioProcessorBase,
-    ClientSettings,
-    # VideoProcessorBase,
-    WebRtcMode,
-    webrtc_streamer,
-)
-
-
-HERE = Path(__file__).parent
-logger = logging.getLogger(__name__)
-
-WEBRTC_CLIENT_SETTINGS = ClientSettings(
-    rtc_configuration={"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]},
-    media_stream_constraints={
-        "video": False,
-        "audio": True,
-    },
-)
-
 import os
-ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(ROOT_DIR, 'data')
+import librosa
+#from bokeh.models.widgets import Button
+from bokeh.models import CustomJS, Button
+from streamlit_bokeh_events import streamlit_bokeh_events
 
-# def saveWavFile(fn):    
-#     WAVE_OUTPUT_FILE = os.path.join(DATA_DIR, "{}.wav".format(fn))
-#     return WAVE_OUTPUT_FILE
+from IPython.display import Audio
+from ipywebrtc import CameraStream, AudioRecorder
 
-# Load Model 
-cnn = loadModel.CNN
-cnn.model = cnn.loadTrainingModel(self=cnn)
+from settings import DATA_DIR, saveWavFile, readWavFile
+from src import loadModel, sound
+
 classes = ['COPD-Mild', 'COPD-Severe', 'Interstitial Lung Disease', 'Normal']
 
 
-def main():
+# In[]
+'''
+# Classification for lung condition.
+'''
+
+cnn = loadModel.CNN
+s = sound.Sound()
+
+'''##Load model'''
+# if st.button("Load CNN model"):
+load_state = st.text("loading...")
+cnn.model = cnn.loadTrainingModel(self=cnn)
+load_state = st.text("Successful...")
     
-    st.header("# Classificaion for lung condition demo.")
-    "### Recording"
+
+'''## 2.Record your own voice for 32 sec.'''
+# st.header('Record your own voice.')
+filename_user = st.text_input('Enter a filename: ')
+
+
+
+stt_button = Button(label="Speak", button_type='primary')
+callback = CustomJS(code= '''
+    var audioContext = new AudioContext();
+    var microphone = audioContext.createMediaStreamSource(stream);
+    recorder = new Recorder(microphone, { numChannels: 1, sampleRate: 8000 });   
+                   
+                   ''')
+stt_button.js_on_event("button_click", callback)
+
+
+result = streamlit_bokeh_events(
+        stt_button,
+        events="microphone",
+        key="foo",
+        refresh_on_update=False,
+        override_height=600,
+        debounce_time=500)
+
+#state_recordButton = st.button("Click to Record")
+#if state_recordButton:
+#    if filename_user == "":
+#        st.warning("Choose a filename.")
+#    else:
+#        #record the sound data and create WAV file
+#        fn = saveWavFile(filename_user)
+#        recorddata = s.recording(fn)
+#        st.text('Record completed!')
+
+
+
+'''## 3.Show and Play your own voice.'''
+filenames = os.listdir(DATA_DIR)
+selected_filename = st.selectbox('Select a file', filenames) # selected_filename contains "XXX.wav" but not whole, correct filepath
+
+
+# state_checkbox = st.checkbox('Show dataframe')
+# if state_checkbox:
+#     chart_data = s.read(selected_filename)
+#     st.line_chart(chart_data) 
     
-    webrtc_ctx = webrtc_streamer(
-        key="sendonly-audio",
-        mode=WebRtcMode.SENDONLY,
-        audio_receiver_size=1792, #256 = 5 seconds
-        client_settings=WEBRTC_CLIENT_SETTINGS,
-    )
-    
-    if not webrtc_ctx.audio_receiver:
-        st.info('Now condition: Stop recording.')
+state_playButton = st.button("Click to Play")
+if state_playButton:
+    # st.text(selected_filename)
+    # s.read(selected_filename)
+    fn = readWavFile(selected_filename)
+    s.play(fn)
         
+# '''## 5.Show the recording data'''
+
+    
+    
+'''## 4.Predict'''
+state_predictButton = st.button("Predition")
+if state_predictButton:
+    
+    # Read the sound file 
+
+    fn = readWavFile(selected_filename)
+
+    s_pred = sound.Sound()
+    s_pred.read(fn)
+    
+    sample_data = s_pred.myrecording
+    
+    st.text('Read the sound file {} completed'.format(selected_filename))
+    
+    data_pred = cnn.samplePred(cnn, sample_data)
+    data_pred_class = np.argmax(np.round(data_pred), axis=1)
+    
+    # s2 is the number of the classes
+    s1 = classes[data_pred_class[0]]
+    # s1 is the percentage of the predicted class
+    s2 = np.round(float(data_pred[0,data_pred_class])*100, 4)
+    st.text("Predict class: {} for {}%".format(s1, s2))
+
+    
+    
+     
+
+
+
+# In[]
+
+# if st.button("Play the recording"):
+    # sd.playrec(myrecording)
+    # plt.plot(myrecording)
+
+#Selec a voice file
+# st.header('Classification for lung condition.')
+# folder_path='.\data'
+# filenames = os.listdir(folder_path)
+# selected_filename = st.selectbox('Select a file', filenames)
+
+
+
+
+#        record_state.text(f"Saving sample as {filename}.mp3")
+#
+#        path_myrecording = f"./samples/{filename}.mp3"
+#
+#        st.audio(read_audio(path_myrecording))
+
+#        fig = create_spectrogram(path_myrecording)
+#        st.pyplot(fig)
         
-    if webrtc_ctx.audio_receiver:
-        st.info('Now strat recording.\n Please breathe toward the microphone.')
-        try:
-            audio_frames = webrtc_ctx.audio_receiver.get_frames(timeout=1)
-        except:
-            logger.warning("Queue is empty. Abort.")
-            st.error('ohoh')
-            
-        sound_chunk = pydub.AudioSegment.empty()
-        for audio_frame in audio_frames:
-            sound = pydub.AudioSegment(
-                data=audio_frame.to_ndarray().tobytes(),
-                sample_width=audio_frame.format.bytes,
-                frame_rate=audio_frame.sample_rate,
-                channels=len(audio_frame.layout.channels),
-            )
-            sound_chunk += sound    
-    
-        # state_btn_save = st.button('Save')
-        # if state_btn_save:
-        #     try:
-        #         # sound_chunk.export(saveWavFile('temp'), format='wav')
-                
-        #         st.info("Writing wav to disk")
-        #     except:
-        #         st.error('Try do recording first and do saving.')
-            
-        state_button = st.button('Click to show the data')
-        if state_button:
-            # try:
-            # st.text('Click!')
-            sound_chunk = sound_chunk.set_channels(1) # Stereo to mono
-            sample = np.array(sound_chunk.get_array_of_samples())
-            
-            st.success('PLotting the data...') 
-            fig_place = st.empty()
-            fig, [ax_time, ax_mfcc] = plt.subplots(2,1)
-            
-            ax_time.cla()
-            times = (np.arange(-len(sample), 0)) / sound_chunk.frame_rate
-            ax_time.plot(times, sample)
 
-            st.info('Librosa.mfcc ...')
-            # try:
-            X = librosa.feature.mfcc(sample/1.0)
-            # except:
-                # st.error('Something wrong with librosa.feature.mfcc ...')
-                
-            ax_mfcc.cla()
-            librosa.display.specshow(X, x_axis='time')
-            fig_place.pyplot(fig)
-            
-            #Do Prediction
-            data_pred = cnn.samplePred(cnn, sample/1.0)
-            data_pred_class = np.argmax(np.round(data_pred), axis=1)
-    
-            # s2 is the number of the classes
-            s1 = classes[data_pred_class[0]]
-            # s1 is the percentage of the predicted class
-            s2 = np.round(float(data_pred[0,data_pred_class])*100, 4)
-            st.text("Predict class: {} for {}%".format(s1, s2))
-
-            # except:
-                # st.error('Try do recording first and do saving.')
-            
-    # file_bytes = st.file_uploader("Upload a file", type=("wav", "mp3", "m4a"))
-    
-    # # Plat the sounds
-    # st.audio(file_bytes, format = 'audio/m4a')
-    
-    # st.text('file_bytes: {}'.format(file_bytes))
-    # st.text('file_bytes.getvalue: {}'.format(file_bytes.getvalue()))
-    # st.text('file_bytes.getbuffer: {}'.format(file_bytes.getbuffer()))
-
-    # librosa.load(file_bytes)
-    
-    # data = np.frombuffer(file_bytes.getvalue(), dtype=np.ubyte)
-    # test = pydub.AudioSegment.from_mono_audiosegments(file_bytes)
-    
-    
-    # fig_place = st.empty()
-    # fig, ax_time = plt.subplots(1,1)
-    # ax_time.plot(data)
-    # plt.ylim([-500,500])
-    
-    # fig_place.pyplot(fig)
-    
-    # fig_place = st.empty()
-
-    # fig, [ax_time, ax_freq] = plt.subplots(
-    #     2, 1, gridspec_kw={"top": 1.5, "bottom": 0.2}
-    # )
-    
-    # sound_window_len = 5000  # 5s
-    # sound_window_buffer = None
-    
-
-    # while True:
-    #     if webrtc_ctx.audio_receiver:
-    #         try:
-    #             audio_frames = webrtc_ctx.audio_receiver.get_frames(timeout=1)
-    #         except queue.Empty:
-    #             logger.warning("Queue is empty. Abort.")
-    #             break
-
-    #         sound_chunk = pydub.AudioSegment.empty()
-    #         for audio_frame in audio_frames:
-    #             sound = pydub.AudioSegment(
-    #                 data=audio_frame.to_ndarray().tobytes(),
-    #                 sample_width=audio_frame.format.bytes,
-    #                 frame_rate=audio_frame.sample_rate,
-    #                 channels=len(audio_frame.layout.channels),
-    #             )
-    #             sound_chunk += sound
-
-    #         if len(sound_chunk) > 0:
-    #             if sound_window_buffer is None:
-    #                 sound_window_buffer = pydub.AudioSegment.silent(
-    #                     duration=sound_window_len
-    #                 )
-
-    #             sound_window_buffer += sound_chunk
-    #             if len(sound_window_buffer) > sound_window_len:
-    #                 sound_window_buffer = sound_window_buffer[-sound_window_len:]
-
-    #         if sound_window_buffer:
-    #             # Ref: https://own-search-and-study.xyz/2017/10/27/python%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%A6%E9%9F%B3%E5%A3%B0%E3%83%87%E3%83%BC%E3%82%BF%E3%81%8B%E3%82%89%E3%82%B9%E3%83%9A%E3%82%AF%E3%83%88%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0%E3%82%92%E4%BD%9C/  # noqa
-    #             sound_window_buffer = sound_window_buffer.set_channels(
-    #                 1
-    #             )  # Stereo to mono
-    #             sample = np.array(sound_window_buffer.get_array_of_samples())
-
-    #             ax_time.cla()
-    #             times = (np.arange(-len(sample), 0)) / sound_window_buffer.frame_rate
-    #             ax_time.plot(times, sample)
-    #             ax_time.set_xlabel("Time")
-    #             ax_time.set_ylabel("Magnitude")
-
-    #             spec = np.fft.fft(sample)
-    #             freq = np.fft.fftfreq(sample.shape[0], 1.0 / sound_chunk.frame_rate)
-    #             freq = freq[: int(freq.shape[0] / 2)]
-    #             spec = spec[: int(spec.shape[0] / 2)]
-    #             spec[0] = spec[0] / 2
-
-    #             ax_freq.cla()
-    #             ax_freq.plot(freq, np.abs(spec))
-    #             ax_freq.set_xlabel("Frequency")
-    #             ax_freq.set_yscale("log")
-    #             ax_freq.set_ylabel("Magnitude")
-
-    #             fig_place.pyplot(fig)
-    #     else:
-    #         logger.warning("AudioReciver is not set. Abort.")
-    #         break
-    
-    
-    
-    # st.info("Writing wav to disk")
-    # sound_window_buffer.export('temp.wav', format='wav')    
+#import numpy as np
+#import pandas as pd
+##import time
+#import pyaudio
+#
+#import streamlit as st
+#import speech_recognition as sr
+#
+#def takecomand():
+#    r=sr.Recognizer()
+#    with sr.Microphone() as source:
+#        st.write("answer please....")
+#        audio=r.listen(source)
+#        try:
+#            text=r.recognize_google(audio)
+#            st.write("You  said :",text)
+#        except:
+#            st.write("Please say again ..")
+#        return text
+#
+#if st.button("Click me"):
+#    takecomand()
 
 
-    
-    
-    # sdata = app_sendonly_audio()
-    
-    # state_playButton = st.button("Click to show")
-    # if state_playButton:
-        # # st.text(sdata)
-        # st.text('Hello!')
-        # try:
-        #     st.pyplot(sdata)
-        # except:
-        #    logger.warning("Error in plotting sdata.")
-        
-    #def recorder_factory():
-    #    return MediaRecorder("record.wav")
+#FORMAT = pyaudio.paInt16 
+#CHANNELS = 1
+#RATE = 44100
+#INPUT_BLOCK_TIME = 0.05
+#INPUT_FRAMES_PER_BLOCK = int(RATE*INPUT_BLOCK_TIME)
+#
+#
+#class LungTester(object):
+#    def __init__(self):
+#        self.pa = pyaudio.PyAudio()
+#        self.stream = self.open_mic_stream()
+#        self.list = []
+#        self.numpydata = np.array([])
+#
+#    def stop(self):
+#        self.stream.close()
+#    
+#    def find_input_device(self):
+#        device_index = None            
+#        for i in range( self.pa.get_device_count() ):     
+#            devinfo = self.pa.get_device_info_by_index(i)   
+#            print( "Device %d: %s"%(i,devinfo["name"]) )
+#
+#            for keyword in ["mic","input"]:
+#                if keyword in devinfo["name"].lower():
+#                    print( "Found an input: device %d - %s"%(i,devinfo["name"]) )
+#                    device_index = i
+#                    return device_index
+#
+#        if device_index == None:
+#            print( "No preferred input found; using default input device." )
+#
+#        return device_index
+#    
+#    def open_mic_stream( self ):
+#        device_index = self.find_input_device()
+#
+#        stream = self.pa.open(   format = FORMAT,
+#                                 channels = CHANNELS,
+#                                 rate = RATE,
+#                                 input = True,
+#                                 input_device_index = device_index,
+#                                 frames_per_buffer = INPUT_FRAMES_PER_BLOCK)
+#        
+#        return stream
+#    
+#    def listen(self):
+#        try:
+#            block = self.stream.read(INPUT_FRAMES_PER_BLOCK)
+#        except IOError as e:
+#            # dammit. 
+#            self.errorcount += 1
+#            print( "(%d) Error recording: %s"%(self.errorcount,e) )
+#            self.noisycount = 1
+#            return
+#        
+#        #Do something
+#        self.list.append(block)
+#        self.numpydata = np.frombuffer(np.array(self.list), dtype=np.int16)
+#        
+#        return self.numpydata
+#'''
+## To Test your Lung condition
+##Let's START!!
+#'''
+#
+#left_column, right_column = st.beta_columns(2)
+#pressed = left_column.button('Press me?')
+#if pressed:
+#    right_column.write("GOGO")
+#    
 
-    #webrtc_streamer(
-    #    key="sendonly-audio",
-    #    mode=WebRtcMode.SENDONLY,
-    #    in_recorder_factory=recorder_factory,
-    #    client_settings=ClientSettings(
-     #       rtc_configuration={
-    #            "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
-    #        },
-    #        media_stream_constraints={
-    #            "audio": True,
-    #            "video": False,
-    #        },
-    #    ),
-    #)
-    
-    
-    
-if __name__ == '__main__':
-    import os
 
-    DEBUG = os.environ.get("DEBUG", "false").lower() not in ["false", "no", "0"]
-
-    logging.basicConfig(
-        format="[%(asctime)s] %(levelname)7s from %(name)s in %(pathname)s:%(lineno)d: "
-        "%(message)s",
-        force=True,
-    )
-
-    logger.setLevel(level=logging.DEBUG if DEBUG else logging.INFO)
-    
-    st_webrtc_logger = logging.getLogger("streamlit_webrtc")
-    st_webrtc_logger.setLevel(logging.DEBUG)
-
-    fsevents_logger = logging.getLogger("fsevents")
-    fsevents_logger.setLevel(logging.WARNING)
-    
-    main()
+##left_column, right_column = st.beta_columns(2)
+##pressed = left_column.button('Press me?')
+##if pressed:
+##    right_column.write("GOGO")
+##    'Starting a long computation...'
+##    # Add a placeholder
+##    latest_iteration = st.empty()
+##    bar = st.progress(0)
+##    
+##    for i in range(100):
+##      # Update the progress bar with each iteration.
+##      latest_iteration.text(f'Iteration {i+1}')
+##      bar.progress(i + 1)
+##      time.sleep(0.01)
+##    
+##    '...and now we\'re done!'
+#
+#
+##left_column, right_column, mid_column = st.beta_columns(3)
+##pressed = left_column.button('Press me?')
+##if pressed:
+##    right_column.write("Woohoo!")
+##    pressed = mid_column.button('HAHA')
+##
+##expander = st.beta_expander("FAQ")
+##expander.write("Here you could put in some really, really long explanations...")
+#
+#df = pd.DataFrame({
+#  'first column': [1, 2, 3, 4],
+#  'second column': [10, 20, 30, 40]
+#})
+#
+#option = st.sidebar.selectbox(
+#    'Which number do you like best?',
+#     df['first column'])
+#
+#'You selected:', option
+#
+#
+#
+#df = pd.DataFrame({
+#  'first column': [1, 2, 3, 4],
+#  'second column': [10, 20, 30, 40]
+#})
+#
+#df
+#
+#option = st.selectbox(
+#    'Which number do you like best?',
+#     df['second column'])
+#
+#'You selected: ', option
+#
+#if st.checkbox('Show dataframe'):
+#    chart_data = pd.DataFrame(
+#       np.random.randn(20, 3),
+#       columns=['a', 'b', 'c'])
+#
+#    chart_data
+#
+#map_data = pd.DataFrame(
+#    np.random.randn(100, 2) / [3, 5] + [23.5, 121],
+#    columns=['lat', 'lon']) #Lat緯度 Lon經度
+#
+#st.map(map_data)
+#
+#"""
+## Line Chart for randon
+#$ Line Chart for randon
+#This is a ezample for line chart:
+#"""
+#chart_data = pd.DataFrame(
+#     np.random.randn(20, 3),
+#     columns=['a', 'b', 'c'])
+#
+#st.line_chart(chart_data)
+#
+#
+#"""
+## My first app
+## HHHHEEEE
+#Here's our first attempt at using data to create a table:
+#"""
+#
+#df = pd.DataFrame({
+#  'first column': [1, 2, 3, 4],
+#  'second column': [10, 20, 30, 40]
+#})
+#
+#df
