@@ -15,3 +15,5 @@ streamlit_bokeh_events
 
 IPython
 ipywebrtc
+pydub
+streamlit_webrtc
